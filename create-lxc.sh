@@ -1,4 +1,5 @@
 #!/bin/bash
+# vim: ts=4 sw=4 noet
 
 # This script will make a Bookstack LXC container!
 # It asks a number of questions, and then kicks off an LXC container creation,
