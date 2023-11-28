@@ -26,6 +26,9 @@
 # After the LXC container is set up, the user is given the MAC address, and
 # told what to do next.
 
+set -eu
+set -o pipefail
+
 echo -n "What will be the name for this Bookstack server? "
 read BOOKSTACK_NAME
 echo -n "So, this will be ${BOOKSTACK_NAME}.stanford.edu [y/n]? "
