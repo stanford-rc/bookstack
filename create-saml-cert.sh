@@ -1,4 +1,5 @@
 #!/bin/sh
+# vim: ts=4 sw=4 noet
 
 # This generates a self-signed certificate that is suitable for use in a SAML
 # SP.  It uses a 2048-bit RSA private key, and the certificate has a lifetime
