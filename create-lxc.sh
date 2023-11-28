@@ -5,12 +5,14 @@
 # It asks a number of questions, and then kicks off an LXC container creation,
 # which does some of the basic setup needed for a Bookstack container.
 
-# This script asks for the following info:
-# * The server name
-# * Acceptance of the Let's Encrypt ToS
-# * An email address to use for Let's Encrypt notifications
-# * The Git repo URL (HTTPS only) and branch/tag/commit
-# * A Vault AppRole ID
+# This script asks for the following info, which can be provided through
+# setting the following environment variables:
+# * The server name (BOOKSTACK_NAME)
+# * Acceptance of the Let's Encrypt ToS (set ACCEPT_LETS_ENCRYPT_TOS to "yes")
+# * An email address to use for Let's Encrypt notifications # (LETS_ENCRYPT_EMAIL)
+# * The Git repo URL (HTTPS only) and branch/tag/commit (GIT_REPO for the URL;
+#   GIT_COMMIT for the commit hash).
+# * A Vault AppRole ID (VAULT_APPID)
 
 # The LXC container is set up as follows:
 # * 2 cores and 8 GiB memory
@@ -29,69 +31,93 @@
 set -eu
 set -o pipefail
 
-echo -n "What will be the name for this Bookstack server? "
-read BOOKSTACK_NAME
-echo -n "So, this will be ${BOOKSTACK_NAME}.stanford.edu [y/n]? "
-read yn
-if [ ! ${yn} = y ]; then
-	echo 'Exiting'
-	exit 1
+if [ ! "${BOOKSTACK_NAME:-x}" = "x" ]; then
+	echo "Using Bookstack name ${BOOKSTACK_NAME}" >&2
+else
+	echo -n "What will be the name for this Bookstack server? "
+	read BOOKSTACK_NAME
+	echo -n "So, this will be ${BOOKSTACK_NAME}.stanford.edu [y/n]? "
+	read yn
+	if [ ! ${yn} = y ]; then
+		echo 'Exiting'
+		exit 1
+	fi
 fi
 
-echo
-echo "The Bookstack server will use Let's Encrypt for its TLS certificate."
-echo "Let's Encrypt is governed by the ToS at https://letsencrypt.org/repository/"
-echo -n "Do you agree to the Let's Encrypt ToS [y/n]? "
-read yn
-if [ ! ${yn} = y ]; then
-	echo 'Exiting'
-	exit 1
+if [ "${ACCEPT_LETS_ENCRYPT_TOS:-no}" = "yes" ]; then
+	echo "Accepted Let's Encrypt ToS" >&2
+else
+	echo
+	echo "The Bookstack server will use Let's Encrypt for its TLS certificate."
+	echo "Let's Encrypt is governed by the ToS at https://letsencrypt.org/repository/"
+	echo -n "Do you agree to the Let's Encrypt ToS [y/n]? "
+	read yn
+	if [ ! ${yn} = y ]; then
+		echo 'Exiting'
+		exit 1
+	fi
 fi
 
-echo
-echo "When there's a problem with our cert, Let's Encrypt will email us."
-echo -n "What email should Let's Encrypt use for notifications? "
-read LETS_ENCRYPT_EMAIL
-echo -n "Use ${LETS_ENCRYPT_EMAIL} for notifications [y/n]? "
-read yn
-if [ ! ${yn} = y ]; then
-	echo 'Exiting'
-	exit 1
+if [ ! "${LETS_ENCRYPT_EMAIL:-x}" = "x" ]; then
+	echo "Using Let's Encrypt contact email ${LETS_ENCRYPT_EMAIL}" >&2
+else
+	echo
+	echo "When there's a problem with our cert, Let's Encrypt will email us."
+	echo -n "What email should Let's Encrypt use for notifications? "
+	read LETS_ENCRYPT_EMAIL
+	echo -n "Use ${LETS_ENCRYPT_EMAIL} for notifications [y/n]? "
+	read yn
+	if [ ! ${yn} = y ]; then
+		echo 'Exiting'
+		exit 1
+	fi
 fi
 
-echo
-echo "Secrets relating to Bookstack are in Vault.  An AppRole is used for auth."
-echo -n "What is the App ID for the AppRole? "
-read VAULT_APPID
-echo -n "Use ${VAULT_APPID} as the AppRole ID [y/n]? "
-read yn
-if [ ! ${yn} = y ]; then
-	echo 'Exiting'
-	exit 1
+if [ ! "${VAULT_APPID:-x}" = "x" ]; then
+	echo "Using Vault AppRole ID ${VAULT_APPID}" >&2
+else
+	echo
+	echo "Secrets relating to Bookstack are in Vault.  An AppRole is used for auth."
+	echo -n "What is the App ID for the AppRole? "
+	read VAULT_APPID
+	echo -n "Use ${VAULT_APPID} as the AppRole ID [y/n]? "
+	read yn
+	if [ ! ${yn} = y ]; then
+		echo 'Exiting'
+		exit 1
+	fi
 fi
 
-echo
-echo "The LXC creation process will clone the repo with our scripts."
-echo -n "What's the HTTPS URL [https://github.com/stanford-rc/bookstack.git]? "
-read GIT_REPO
-GIT_REPO=${GIT_REPO:=https://github.com/stanford-rc/bookstack.git}
-echo -n "Use repo ${GIT_REPO} [y/n]? "
-read yn
-if [ ! ${yn} = y ]; then
-	echo 'Exiting'
-	exit 1
+if [ ! "${GIT_REPO:-x}" = "x" ]; then
+	echo "Using Git Repo URL ${GIT_REPO}" >&2
+else
+	echo
+	echo "The LXC creation process will clone the repo with our scripts."
+	echo -n "What's the HTTPS URL [https://github.com/stanford-rc/bookstack.git]? "
+	read GIT_REPO
+	GIT_REPO=${GIT_REPO:=https://github.com/stanford-rc/bookstack.git}
+	echo -n "Use repo ${GIT_REPO} [y/n]? "
+	read yn
+	if [ ! ${yn} = y ]; then
+		echo 'Exiting'
+		exit 1
+	fi
 fi
 
-echo
-echo "The Git repo can be checked out to a specific commit, branch, or tag."
-echo -n "Enter a commit ID, branch name, or tag name [main]: "
-read GIT_COMMIT
-GIT_COMMIT=${GIT_COMMIT:=main}
-echo -n "Check out ${GIT_REPO} to ${GIT_COMMIT} [y/n]? "
-read yn
-if [ ! ${yn} = y ]; then
-	echo 'Exiting'
-	exit 1
+if [ ! "${GIT_COMMIT:-x}" = "x" ]; then
+	echo "Using Git commit ID/tag/branch ${GIT_COMMIT}" >&2
+else
+	echo
+	echo "The Git repo can be checked out to a specific commit, branch, or tag."
+	echo -n "Enter a commit ID, branch name, or tag name [main]: "
+	read GIT_COMMIT
+	GIT_COMMIT=${GIT_COMMIT:=main}
+	echo -n "Check out ${GIT_REPO} to ${GIT_COMMIT} [y/n]? "
+	read yn
+	if [ ! ${yn} = y ]; then
+		echo 'Exiting'
+		exit 1
+	fi
 fi
 
 echo
