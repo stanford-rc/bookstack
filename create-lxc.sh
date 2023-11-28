@@ -120,9 +120,14 @@ else
 	fi
 fi
 
-echo
-echo "Creating LXD container ${BOOKSTACK_NAME}..."
-lxc init ubuntu:22.04 ${BOOKSTACK_NAME} --verbose <<EOF
+if [ "${PARSABLE:-no}" = "yes" ]; then
+	LXC_FLAGS="--quiet"
+else
+	echo
+	echo "Creating LXD container ${BOOKSTACK_NAME}..."
+	LXC_FLAGS="--verbose"
+fi
+lxc ${LXC_FLAGS} init ubuntu:22.04 ${BOOKSTACK_NAME} <<EOF
 ---
 config:
   limits.cpu: 2
@@ -235,12 +240,20 @@ config:
       permissions: '0644'
       content: Hello
 EOF
-echo
-echo "MAC address for ${BOOKSTACK_NAME}.stanford.edu is $(lxc config get ${BOOKSTACK_NAME} volatile.eth0.hwaddr)"
-echo 'Now create your NetDB Node, and wait for DHCP to update.'
-echo 'Once DHCP is updated, run:'
-echo " * \`lxc start ${BOOKSTACK_NAME}\` to start the container"
-echo " * \`lxc shell ${BOOKSTACK_NAME}\` to get a shell"
-echo "Once in the shell, wait for the file \`/cloud_init_complete\` to appear."
-echo "You can then access /root/repo and run the next scripts!"
+
+
+BOOKSTACK_MAC="$(lxc config get ${BOOKSTACK_NAME} volatile.eth0.hwaddr)"
+if [ "${PARSABLE:-no}" = "yes" ]; then
+	echo "${BOOKSTACK_MAC}"
+else
+	echo
+	echo "MAC address for ${BOOKSTACK_NAME}.stanford.edu is ${BOOKSTACK_MAC}"
+	echo 'Now create your NetDB Node, and wait for DHCP to update.'
+	echo 'Once DHCP is updated, run:'
+	echo " * \`lxc start ${BOOKSTACK_NAME}\` to start the container"
+	echo " * \`lxc shell ${BOOKSTACK_NAME}\` to get a shell"
+	echo "Once in the shell, wait for the file \`/cloud_init_complete\` to appear."
+	echo "You can then access /root/repo and run the next scripts!"
+fi
+
 exit 0
