@@ -31,8 +31,8 @@ read BOOKSTACK_NAME
 echo -n "So, this will be ${BOOKSTACK_NAME}.stanford.edu [y/n]? "
 read yn
 if [ ! ${yn} = y ]; then
-    echo 'Exiting'
-    exit 1
+	echo 'Exiting'
+	exit 1
 fi
 
 echo
@@ -41,8 +41,8 @@ echo "Let's Encrypt is governed by the ToS at https://letsencrypt.org/repository
 echo -n "Do you agree to the Let's Encrypt ToS [y/n]? "
 read yn
 if [ ! ${yn} = y ]; then
-    echo 'Exiting'
-    exit 1
+	echo 'Exiting'
+	exit 1
 fi
 
 echo
@@ -52,8 +52,8 @@ read LETS_ENCRYPT_EMAIL
 echo -n "Use ${LETS_ENCRYPT_EMAIL} for notifications [y/n]? "
 read yn
 if [ ! ${yn} = y ]; then
-    echo 'Exiting'
-    exit 1
+	echo 'Exiting'
+	exit 1
 fi
 
 echo
@@ -63,8 +63,8 @@ read VAULT_APPID
 echo -n "Use ${VAULT_APPID} as the AppRole ID [y/n]? "
 read yn
 if [ ! ${yn} = y ]; then
-    echo 'Exiting'
-    exit 1
+	echo 'Exiting'
+	exit 1
 fi
 
 echo
@@ -75,8 +75,8 @@ GIT_REPO=${GIT_REPO:=https://github.com/stanford-rc/bookstack.git}
 echo -n "Use repo ${GIT_REPO} [y/n]? "
 read yn
 if [ ! ${yn} = y ]; then
-    echo 'Exiting'
-    exit 1
+	echo 'Exiting'
+	exit 1
 fi
 
 echo
@@ -87,8 +87,8 @@ GIT_COMMIT=${GIT_COMMIT:=main}
 echo -n "Check out ${GIT_REPO} to ${GIT_COMMIT} [y/n]? "
 read yn
 if [ ! ${yn} = y ]; then
-    echo 'Exiting'
-    exit 1
+	echo 'Exiting'
+	exit 1
 fi
 
 echo
