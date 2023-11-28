@@ -218,7 +218,7 @@ config:
       - docker volume create bookstack-db
       - mkdir /run/bookstack
       - git clone ${GIT_REPO} /root/repo
-      - cd /root/grpo && git checkout ${GIT_COMMIT}
+      - cd /root/repo && git checkout ${GIT_COMMIT}
     write_files:
     - path: /etc/environment
       owner: root:root
