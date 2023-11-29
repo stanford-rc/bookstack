@@ -143,6 +143,12 @@ here as `BASE`:
 
   * `key` contains the SAML SP key
 
+* `BASE/db` has two passwords, used by the Database server:
+
+  * `bookstack` contains the password for the `bookstack` database user
+
+  * `root` contains the MariaDB root password
+
 # Building container images
 
 See the [docker-bookstack-certbot
