@@ -81,7 +81,26 @@ portability, we use those!
 
 The following paths exist in the VM's data volume:
 
-TODO!
+* `BOOKSTACK_APP_KEY.txt`: The API key to get admin access to Bookstack,
+  through it's API.
+
+* `cert`: This has a self-signed TLS cert and key.  They are not used, and
+  should be left alone.
+
+* `log/letsencrypt`: Certbot logs are placed here.
+
+* `log/nginx`: Nginx web server access and error logs are placed here.
+
+* `log/php/error.log`: PHP-level logs, including logs from FPM (the PHP FastCGI
+  implementation), are here.
+
+* `nginx`: All of Nginx's configuration is here.  It should be left alone.
+
+* `php`: PHP's configuration is here.  It should be left alone.
+
+* `www`: TODO
+
+
 
 ## Variables
 
