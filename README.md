@@ -414,3 +414,35 @@ There are two data volumes:
 The command `docker volume inspect VOLUME_NAME` command gives you, among other
 things, the path to volume files.  *Don't mess with these files while its
 container is running!*
+
+# Upgrading the containers
+
+Remember, before upgrading anything, be sure to have a backup of everything!
+
+## MariaDB
+
+Upgrading the MariaDB container involves shutting down the Docker Compose
+stack, updating the `docker-compose.yaml` file, and bringing up _just_ the
+database.  You then run the upgrade command, and bring up the Bookstack
+application.
+
+To stop the stack, run `docker-compose down`, which will shut down everything,
+but leave the volumes intact.  It's then safe to update to the newer
+`docker-compose.yaml` file.
+
+Next, run `docker-compose up --no-start`.  That creates everything, but does
+not start any services.  This will download the new MariaDB container image,
+but not start anything.
+
+Next, run `docker-compose start db`.  That will start just the MariaDB server.
+Run `docker logs -f bookstack-db` to see logs from DB server start.  Once you
+see the message "mariadbd: ready for connection.", it is safe to continue.
+
+The last part of the upgrade is to run `mariadb-upgrade` within the container.
+To do so, run `docker exec bookstack-db mariadb-upgrade --password=$(cat
+/run/bookstack/db-root)`.  The tool will either finish the upgrade, or will
+report no upgrade is needed.  In particular, minor upgrades might not need any
+table upgrades.
+
+Finally, run `docker-compose up -d` to bring up the rest of the stack (the
+Bookstack server)!
