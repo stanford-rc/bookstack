@@ -235,6 +235,9 @@ The script can be run on any system that can run BASH scripts and which has
 OpenSSL (and the `openssl` command) installed.  The script will create a script
 valid for two years.
 
+Once you have a SAML key and certificate, load them into Vault, so they can be
+picked up in the VM.
+
 # Bringing up the Docker Compose stack
 
 TODO!
