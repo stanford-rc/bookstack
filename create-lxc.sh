@@ -14,6 +14,7 @@
 #   GIT_COMMIT for the commit hash).
 # * A Vault Address (VAULT_ADDR)
 # * A Vault AppRole ID (VAULT_APPID)
+# * The path to the Key-Value Secrets Engine (VAULT_MOUNT)
 
 # The LXC container is set up as follows:
 # * 2 cores and 8 GiB memory
@@ -97,6 +98,21 @@ else
 	echo -n "What is the App ID for the AppRole? "
 	read VAULT_APPID
 	echo -n "Use ${VAULT_APPID} as the AppRole ID [y/n]? "
+	read yn
+	if [ ! ${yn} = y ]; then
+		echo 'Exiting'
+		exit 1
+	fi
+fi
+
+if [ ! "${VAULT_MOUNT:-x}" = "x" ]; then
+	echo "Using Vault Key-Value Secrets Engine mount point ${VAULT_MOUNT}" >&2
+else
+	echo
+	echo "Secrets are stored in the Key-Value Secrets Engine."
+	echo -n "Where is the Secrets Engine mounted? "
+	read VAULT_MOUNT
+	echo -n "Use ${VAULT_MOUNT} as the Key-Value Secrets Engine mount point [y/n]? "
 	read yn
 	if [ ! ${yn} = y ]; then
 		echo 'Exiting'
@@ -252,6 +268,7 @@ config:
         LETS_ENCRYPT_TOS_AGREE=yes
         VAULT_ADDR=${VAULT_ADDR}
         VAULT_APPID=${VAULT_APPID}
+        VAULT_MOUNT=${VAULT_MOUNT}
     - path: /cloud_init_complete
       owner: root:root
       permissions: '0644'
