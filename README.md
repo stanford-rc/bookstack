@@ -391,3 +391,26 @@ up Bookstack!
 ## Finishing Bookstack configuration
 
 TODO!
+
+# Accessing the containers
+
+There are two containers:
+
+* The `bookstack-db` container, providing the `db` service, runs MariaDB.
+
+* The `bookstack-app` container, providing the `app` service, runs Bookstack.
+
+When they're running, you can access the container environments with `docker
+exec -it CONTAINER_NAME bash`.  You can also read logs from the container using
+`docker logs CONTAINER_NAME`.
+
+There are two data volumes:
+
+* The `bookstack-data` volume has the files from the `bookstack-app` container.
+
+* The `bookstack-db` volume has the MariaDB database files from the
+  `bookstack-db` container.
+
+The command `docker volume inspect VOLUME_NAME` command gives you, among other
+things, the path to volume files.  *Don't mess with these files while its
+container is running!*
