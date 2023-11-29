@@ -271,6 +271,9 @@ config:
       owner: root:root
       permissions: '0644'
       content: |
+        # These environmnt variables were originally put in to place by
+        # cloud-init.  They are read in by pam_env whenever a PAM session
+        # starts.
         BOOKSTACK_TZ=US/Pacific
         BOOKSTACK_SAML_IDP_NAME="Stanford Login"
         BOOKSTACK_SAML_IDP_ENTITYID=https://login.stanford.edu/metadata.xml
@@ -279,10 +282,13 @@ config:
         BOOKSTACK_SECRET_SAML_CERT=/run/bookstack/sp_cert.pem
         BOOKSTACK_SECRET_SAML_KEY=/run/bookstack/sp_key.pem
         BOOKSTACK_URL=https://${BOOKSTACK_NAME}.stanford.edu
+        #BOOKSTACK_AUTH_METHOD=
         LETS_ENCRYPT_CONTACT=${LETS_ENCRYPT_EMAIL}
         LETS_ENCRYPT_TOS_AGREE=yes
+        #LETS_ENCRYPT_STAGING=
         VAULT_ADDR=${VAULT_ADDR}
         VAULT_APPID=${VAULT_APPID}
+        #VAULT_SECRET=
         VAULT_MOUNT=${VAULT_MOUNT}
         VAULT_BASE=${VAULT_BASE}
     - path: /cloud_init_complete
