@@ -94,6 +94,9 @@ The following paths exist in the VM's data volume:
 * `log/php/error.log`: PHP-level logs, including logs from FPM (the PHP FastCGI
   implementation), are here.
 
+* `www/laravel.log`: This has the logs from the PHP Laravel application
+  framework.  This is the primary application log.
+
 * `nginx`: All of Nginx's configuration is here.  It should be left alone.
 
 * `php`: PHP's configuration is here.  It should be left alone.
