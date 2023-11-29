@@ -96,6 +96,12 @@ The following variables are needed to create the Bookstack VM:
 
 * `VAULT_APPID`: The Vault AppRole ID.
 
+* `VAULT_ADDR`: The address (URL) of the Vault server.
+
+* `VAULT_MOUNT`: The mountpoint of the Key-Value Secrets Engine.
+
+* `VAULT_BASE`: The base path for our secrets.
+
 The following environment variables are used by the Bookstack containers:
 
 * `BOOKSTACK_URL`: The URL to the Bookstack site.  It's formed by taking
