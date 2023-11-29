@@ -449,3 +449,38 @@ table upgrades.
 
 Finally, run `docker-compose up -d` to bring up the rest of the stack (the
 Bookstack server)!
+
+## Bookstack
+
+Upgrading the Bookstack container involves updating the Dockerfile of
+[docker-bookstack-certbot](https://github.com/stanford-rc/docker-bookstack-certbot/pkgs/container/docker-bookstack-certbot),
+waiting for it to rebuild, restarting the stack, and running post-upgrade
+commands.
+
+First, update the `Dockerfile` in the
+[docker-bookstack-certbot](https://github.com/stanford-rc/docker-bookstack-certbot)
+repository, and wait for the container image to build.
+
+Next, run `docker-compose pull app` to have Docker pull down the updated
+container image.  If no new image is found, wait a while and try again.  At
+this point, the stack is still running on the older image.
+
+Run `docker-compose up`, which should trigger a recreation and restart of the
+Bookstack container.  Run `docker logs -f bookstack-app` to see logs from DB
+server start.  The updated Bookstack service should see that this is an
+upgrade, and run a schema migration (that covers the `php artisan migrate`
+command from the [upstream Bookstack upgrade
+guide](https://www.bookstackapp.com/docs/admin/updates/)).
+
+The last part of the upgrade is to clear system caches, which can be done with
+three commands:
+
+* `docker exec bookstack-app php /app/www/artisan cache:clear`
+
+* `docker exec bookstack-app php /app/www/artisan config:clear`
+
+* `docker exec bookstack-app php /app/www/artisan view:clear`
+
+Finally, depending on the upgrade, you might also need to run additional steps
+in the [upstream Bookstack upgrade
+guide](https://www.bookstackapp.com/docs/admin/updates/)).
