@@ -12,6 +12,7 @@
 # * An email address to use for Let's Encrypt notifications # (LETS_ENCRYPT_EMAIL)
 # * The Git repo URL (HTTPS only) and branch/tag/commit (GIT_REPO for the URL;
 #   GIT_COMMIT for the commit hash).
+# * A Vault Address (VAULT_ADDR)
 # * A Vault AppRole ID (VAULT_APPID)
 
 # The LXC container is set up as follows:
@@ -73,11 +74,26 @@ else
 	fi
 fi
 
+if [ ! "${VAULT_ADDR:-x}" = "x" ]; then
+	echo "Using Vault Address ${VAULT_ADDR}" >&2
+else
+	echo
+	echo "Secrets relating to Bookstack are in Vault."
+	echo -n "What is the address of the Vault server? "
+	read VAULT_ADDR
+	echo -n "Use ${VAULT_ADDR} as the Vault server [y/n]? "
+	read yn
+	if [ ! ${yn} = y ]; then
+		echo 'Exiting'
+		exit 1
+	fi
+fi
+
 if [ ! "${VAULT_APPID:-x}" = "x" ]; then
 	echo "Using Vault AppRole ID ${VAULT_APPID}" >&2
 else
 	echo
-	echo "Secrets relating to Bookstack are in Vault.  An AppRole is used for auth."
+	echo "A Vault AppRole is used for auth."
 	echo -n "What is the App ID for the AppRole? "
 	read VAULT_APPID
 	echo -n "Use ${VAULT_APPID} as the AppRole ID [y/n]? "
@@ -234,6 +250,7 @@ config:
         BOOKSTACK_URL=https://${BOOKSTACK_NAME}.stanford.edu
         LETS_ENCRYPT_CONTACT=${LETS_ENCRYPT_EMAIL}
         LETS_ENCRYPT_TOS_AGREE=yes
+        VAULT_ADDR=${VAULT_ADDR}
         VAULT_APPID=${VAULT_APPID}
     - path: /cloud_init_complete
       owner: root:root
