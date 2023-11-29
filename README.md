@@ -114,16 +114,20 @@ The following environment variables are used by the Bookstack containers:
   script—described later on this page—you are prompted to read & agree to the
   [Let's Encrypt Terms of Service](https://letsencrypt.org/repository/).
 
+* `LETS_ENCRYPT_STAGING`: This is optional.  If it's set, Certbot will use the
+  Let's Encrypt staging environment.
+
 * `BOOKSTACK_TZ`: The Olsen time zone ID for the Bookstack application.  It
   influences how times are displayed.  Hard-coded to `US/Pacific`.
+
+* `BOOKSTACK_AUTH_METHOD`: The authentication method to use.  This is either
+  `standard` (username/password) or `saml2`.
 
 * `BOOKSTACK_SAML_IDP_NAME`: The name of the SAML-based login method that
   Bookstack will present to users.  Hard-coded to "Stanford Login".
 
 * `BOOKSTACK_SAML_IDP_ENTITYID`: The URL to the SAML IdP's metadata.
   Hard-coded to the Stanford Login IdP metadata.
-
-* `VAULT_APPID`: As above.
 
 * `BOOKSTACK_SECRET_SAML_CERT`: This is the path to the file containing the
   Bookstack SAML SP certificate.
