@@ -135,6 +135,16 @@ The following environment variables are used by the Bookstack containers:
 * `BOOKSTACK_SECRET_SAML_KEY`: This is the path to the file containing the
   Bookstack SAML SP private key.
 
+* `BOOKSTACK_SAML_DUMP_USER_DETAILS`: This variable is normally not set.  If it
+  is set, and `BOOKSTACK_AUTH_METHOD` is set to `saml2`: then the normal
+  Bookstack app will be disabled.  Instead, when you log in, you will be
+  presented with a JSON-format dump of all the attributes received from the
+  SAML IdP, along with the values of what Bookstack will be using for its
+  attributes (`exernal_id`, `name`, `email`, etc.).
+
+* `BOOKSTACK_DEBUG`: This variable is normally not set.  If it is set, logs of
+  additional detail—**including secrets**—are output to logs.
+
 * `BOOKSTACK_SECRET_DB_BOOKSTACK_PASSWORD`: In MariaDB, a user `bookstack` is
   given full access to database `bookstack`.  This is the path to the file
   containing the password.

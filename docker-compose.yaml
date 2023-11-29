@@ -95,6 +95,7 @@ services:
     environment:
       # Application information
       APP_URL: "${BOOKSTACK_URL}"
+      APP_DEBUG: "${BOOKSTACK_DEBUG-}"
       TZ: "${BOOKSTACK_TZ}"
       LETS_ENCRYPT_TOS_AGREE: "${LETS_ENCRYPT_TOS_AGREE}"
       LETS_ENCRYPT_CONTACT: "${LETS_ENCRYPT_CONTACT}"
@@ -115,6 +116,7 @@ services:
       FILE__SAML2_SP_x509: "/run/secrets/saml-cert" 
       FILE__SAML2_SP_x509_KEY: "/run/secrets/saml-key"
       SAML2_ONELOGIN_OVERRIDES: "{\"sp\":{\"entityId\":\"${BOOKSTACK_URL}\"},\"security\":{\"authnRequestsSigned\":true,\"logoutRequestSigned\":true,\"wantMessagesSigned\":true,\"wantAssertionsSigned\":true,\"wantAssertionsEncrypted\":true}}"
+      SAML2_DUMP_USER_DETAILS: "${BOOKSTACK_SAML_DUMP_USER_DETAILS-}"
 
       # SAML Attribute OID mapping
       SAML2_EMAIL_ATTRIBUTE: "urn:oid:0.9.2342.19200300.100.1.3"
