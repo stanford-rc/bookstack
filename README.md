@@ -238,6 +238,16 @@ valid for two years.
 Once you have a SAML key and certificate, load them into Vault, so they can be
 picked up in the VM.
 
+# Fetching secrets from Vault into the VM
+
+The script `fetch-vault.sh` fetches all of our credentials from Vault, and
+places it into the appropriate locations for Docker to pass on to containers.
+
+The script picks up all of its configuration from the environment, specifically
+from the variables stored in `/etc/environment`.  The only thing missing is the
+Vault AppRole Secret ID.  The script will prompt for the secret at runtime, or
+you may put it into the `VAULT_SECRET` environment variable.
+
 # Bringing up the Docker Compose stack
 
 TODO!
