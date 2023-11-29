@@ -15,6 +15,7 @@
 # * A Vault Address (VAULT_ADDR)
 # * A Vault AppRole ID (VAULT_APPID)
 # * The path to the Key-Value Secrets Engine (VAULT_MOUNT)
+# * The base path where Bookstack Secrets may be found in Vault (VAULT_BASE)
 
 # The LXC container is set up as follows:
 # * 2 cores and 8 GiB memory
@@ -113,6 +114,20 @@ else
 	echo -n "Where is the Secrets Engine mounted? "
 	read VAULT_MOUNT
 	echo -n "Use ${VAULT_MOUNT} as the Key-Value Secrets Engine mount point [y/n]? "
+	read yn
+	if [ ! ${yn} = y ]; then
+		echo 'Exiting'
+		exit 1
+	fi
+fi
+
+if [ ! "${VAULT_BASE:-x}" = "x" ]; then
+	echo "Using base path for Vault Secrets ${VAULT_BASE}" >&2
+else
+	echo
+	echo -n "In Vault, what base path should be used to find secrets? "
+	read VAULT_BASE
+	echo -n "Use ${VAULT_BASE} as the base path for secrets in Vault [y/n]? "
 	read yn
 	if [ ! ${yn} = y ]; then
 		echo 'Exiting'
@@ -269,6 +284,7 @@ config:
         VAULT_ADDR=${VAULT_ADDR}
         VAULT_APPID=${VAULT_APPID}
         VAULT_MOUNT=${VAULT_MOUNT}
+        VAULT_BASE=${VAULT_BASE}
     - path: /cloud_init_complete
       owner: root:root
       permissions: '0644'
