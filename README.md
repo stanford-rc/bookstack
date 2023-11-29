@@ -142,6 +142,14 @@ The following environment variables are used by the Bookstack containers:
 * `BOOKSTACK_SECRET_DB_ROOT_PASSWORD`: This is the path to the file containing
   the MariaDB root password.
 
+* `MAIL_HOST`: The SMTP server that receives email.  It must support TLS.
+
+* `MAIL_PORT`: The port to use for SMTP.
+
+* `MAIL_FROM`: The email address to use for sending mail.
+
+* `MAIL_FROM_NAME`: The name to use with the sending email address.
+
 ## Vault Paths
 
 The following paths are pulled from Vault, off of some base path (represented

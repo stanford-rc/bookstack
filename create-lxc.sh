@@ -291,6 +291,10 @@ config:
         #VAULT_SECRET=
         VAULT_MOUNT=${VAULT_MOUNT}
         VAULT_BASE=${VAULT_BASE}
+        MAIL_HOST=smtp.stanford.edu
+        MAIL_PORT=25
+        MAIL_FROM=nobody@stanford.edu
+        MAIL_FROM_NAME=Bookstack
     - path: /cloud_init_complete
       owner: root:root
       permissions: '0644'
