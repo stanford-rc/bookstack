@@ -242,6 +242,9 @@ valid for two years.
 Once you have a SAML key and certificate, load them into Vault, so they can be
 picked up in the VM.
 
+Finally, make a note of your certificate's end date.  You'll need it later in
+the first-time setup process.
+
 # Fetching secrets from Vault into the VM
 
 The script `fetch-vault.sh` fetches all of our credentials from Vault, and
