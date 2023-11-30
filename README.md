@@ -284,8 +284,10 @@ valid for two years.
 Once you have a SAML key and certificate, load them into Vault, so they can be
 picked up in the VM.
 
-Finally, make a note of your certificate's end date.  You'll need it later in
-the first-time setup process.
+Finally, make a note of your certificate's end date.  The date is provided in
+both human-readable form (for entry into a calendar reminder or other
+notification program), and in the form that you'll need to insert in to SAML
+metadata.
 
 ## Fetching secrets from Vault into the VM
 
@@ -359,7 +361,8 @@ You will need to set several parameters:
 * Set the *Login URL* to `https://YOUR_BOOKSTACK_SITE/saml2/login`.
 
 * In the Metadata, edit the top-level `md:EntityDescriptor` element: Change
-  `validUntil` to match the end date of your SAML SP certificate.
+  `validUntil` to match the end date of your SAML SP certificate.  When you
+  created your SAML certificate, you were given the exact string to enter.
 
 Once your SPDB record is accepted, wait for Stanford Login to pick up the new
 SP metadata (it takes about 15 minutes).  Then, try to log in!

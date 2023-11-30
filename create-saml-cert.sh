@@ -46,6 +46,7 @@ echo "Creating Key, Certificate Request, and Certificate..."
 openssl req -config ${OPENSSL_CONFIG} -new -newkey rsa:2048 -nodes -outform PEM --keyout ${KEY_FILE} -out ${CSR_FILE}
 openssl x509 -req -in ${CSR_FILE} -key ${KEY_FILE} -inform PEM -days 729 -out ${CERT_FILE} -outform PEM
 EXPIRATION_DATE=$(openssl x509 -in ${CERT_FILE} -noout -enddate | cut -d= -f2)
+SAML_VALIDUNTIL=$(echo "${EXPIRATION_DATE}" | awk -F '[ :]' '{ printf "%04d-%02d-%02dT%02d:%02d:%02dZ\n", $6, (index("JanFebMarAprMayJunJulAugSepOctNovDec",$1)+2)/3, $2, $3, $4, $5}')
 
 echo "Cleaning up..."
 rm -f ${OPENSSL_CONFIG} ${CSR_FILE}
@@ -59,5 +60,6 @@ echo "To write this out to Vault, try something like this:"
 echo "  vault kv put /secret/projects/uit-rc-bookstack/saml key=@${KEY_FILE} cert=@${CERT_FILE}"
 echo
 echo "NOTE: The certificate's expiration date is ${EXPIRATION_DATE}."
-echo "Make sure your metadata expires around this time."
+echo "Use the following for your metadata's 'validUntil' date: ${SAML_VALIDUNTIL}"
+echo "Set a calendar entry, or other notification, before your metadata expires!"
 exit 0
