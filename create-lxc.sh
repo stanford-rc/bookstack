@@ -16,6 +16,8 @@
 # * A Vault AppRole ID (VAULT_APPID)
 # * The path to the Key-Value Secrets Engine (VAULT_MOUNT)
 # * The base path where Bookstack Secrets may be found in Vault (VAULT_BASE)
+# * The name of the Google Cloud project ID for storing backups (GOOGLE_PROJECT_ID)
+# * The name of the Google Cloud Storage bucket for storing backups (GOOGLE_RESTIC_BUCKET)
 
 # The LXC container is set up as follows:
 # * 2 cores and 8 GiB memory
@@ -128,6 +130,35 @@ else
 	echo -n "In Vault, what base path should be used to find secrets? "
 	read VAULT_BASE
 	echo -n "Use ${VAULT_BASE} as the base path for secrets in Vault [y/n]? "
+	read yn
+	if [ ! ${yn} = y ]; then
+		echo 'Exiting'
+		exit 1
+	fi
+fi
+
+if [ ! "${GOOGLE_PROJECT_ID:-x}" = "x" ]; then
+	echo "Using Google Cloud project ID ${GOOGLE_PROJECT_ID}" >&2
+else
+	echo
+	echo "Backups will be stored in a Google Cloud Storage bucket."
+	echo -n "What Google Cloud project ID should be used? "
+	read GOOGLE_PROJECT_ID
+	echo -n "Use ${GOOGLE_PROJECT_ID} as the Google Cloud project [y/n]? "
+	read yn
+	if [ ! ${yn} = y ]; then
+		echo 'Exiting'
+		exit 1
+	fi
+fi
+
+if [ ! "${GOOGLE_RESTIC_BUCKET:-x}" = "x" ]; then
+	echo "Using Google Cloud project ID ${GOOGLE_RESTIC_BUCKET}" >&2
+else
+	echo
+	echo -n "What Google Cloud Storage bucket should be used? "
+	read GOOGLE_RESTIC_BUCKET
+	echo -n "Use ${GOOGLE_RESTIC_BUCKET} as the Google Cloud Storage bucket [y/n]? "
 	read yn
 	if [ ! ${yn} = y ]; then
 		echo 'Exiting'
@@ -279,12 +310,16 @@ config:
         BOOKSTACK_SAML_IDP_ENTITYID=https://login.stanford.edu/metadata.xml
         BOOKSTACK_SECRET_DB_BOOKSTACK_PASSWORD=/run/bookstack/db-bookstack
         BOOKSTACK_SECRET_DB_ROOT_PASSWORD=/run/bookstack/db-root
+		BOOKSTACK_SECRET_RESTIC_PASSWORD=/run/bookstack/restic-password
+		BOOKSTACK_SECRET_RESTIC_GOOGLE_CREDENTIALS=/run/bookstack/restic-gcp.json
         BOOKSTACK_SECRET_SAML_CERT=/run/bookstack/sp_cert.pem
         BOOKSTACK_SECRET_SAML_KEY=/run/bookstack/sp_key.pem
         BOOKSTACK_URL=https://${BOOKSTACK_NAME}.stanford.edu
         #BOOKSTACK_AUTH_METHOD=
 		#BOOKSTACK_DEBUG=
 		#SAML2_DUMP_USER_DETAILS=
+		GOOGLE_PROJECT_ID=${GOOGLE_PROJECT_ID}
+		GOOGLE_RESTIC_BUCKET=${GOOGLE_RESTIC_BUCKET}
         LETS_ENCRYPT_CONTACT=${LETS_ENCRYPT_EMAIL}
         LETS_ENCRYPT_TOS_AGREE=yes
         #LETS_ENCRYPT_STAGING=

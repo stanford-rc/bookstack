@@ -59,6 +59,10 @@ echo "Will write MariaDB root password to ${BOOKSTACK_SECRET_DB_ROOT_PASSWORD}" 
 echo "Will write Bookstack DB password to ${BOOKSTACK_SECRET_DB_BOOKSTACK_PASSWORD}" >&2
 vault kv get -mount=${VAULT_MOUNT} -field=root "${VAULT_BASE}/db" > ${BOOKSTACK_SECRET_DB_ROOT_PASSWORD}
 vault kv get -mount=${VAULT_MOUNT} -field=bookstack "${VAULT_BASE}/db" > ${BOOKSTACK_SECRET_DB_BOOKSTACK_PASSWORD}
+echo "Will write Restic repository password to ${BOOKSTACK_SECRET_RESTIC_PASSWORD}" >&2
+echo "Will write Restic GCP service account JSON to ${BOOKSTACK_SECRET_RESTIC_GOOGLE_CREDENTIALS}" >&2
+vault kv get -mount=${VAULT_MOUNT} -field=password "${VAULT_BASE}/restic" > ${BOOKSTACK_SECRET_RESTIC_PASSWORD}
+vault kv get -mount=${VAULT_MOUNT} -field=gcp "${VAULT_BASE}/restic" > ${BOOKSTACK_SECRET_RESTIC_GOOGLE_CREDENTIALS}
 
 # Finally, remove the persisted Vault token and exit!
 if [ -f ~/.vault-token ]; then

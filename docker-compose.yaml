@@ -27,12 +27,28 @@
 # BOOKSTACK_SECRET_DB_ROOT_PASSWORD: Set this to the path of a file.
 #   This will contain the password for the MariaDB root account.
 #
+# BOOKSTACK_SECRET_RESTIC_GOOGLE_CREDENTIALS: Set this to the path of a JSON file.
+#   This will contain the credentials for the Google Cloud service account used
+#   to access the Restic repository.
+#
+# BOOKSTACK_SECRET_RESTIC_PASSWORD: Set this to the path of a file.
+#   This will contain the password used to encrypt all of the data in the
+#   Restic repository.
+#   WARNING: Chaning or deleting this will destroy all of the data in the
+#   Restic (backup) repository!
+#
 # BOOKSTACK_SECRET_SAML_CERT: Set this to the path of a file.
 #   This will contain the PEM-encoded X.509 self-signed SAML SP cert.
 #
 # BOOKSTACK_SECRET_SAML_KEY: Set this to the path of a file.
 #   This will contain the PEM-encoded RSA key for the SAML SP.
 #   Do not encrypt the key file.
+#
+# GOOGLE_PROJECT_ID: Set this to a Google Cloud project ID.
+#   This Google Cloud project will be used to store backups.
+#
+# GOOGLE_RESTIC_BUCKET: Set this to a Google Cloud Storage bucket name.
+#   Backups will be stored in this bucket.
 #
 # LETS_ENCRYPT_CONTACT: Set this to an email address.
 #   This email will receive important notifications from Let's Encrypt.
@@ -63,6 +79,12 @@ secrets:
 
   db-root-password:
     file: "${BOOKSTACK_SECRET_DB_ROOT_PASSWORD}"
+
+  restic-gcp:
+    file: "${BOOKSTACK_SECRET_RESTIC_GOOGLE_CREDENTIALS}"
+
+  restic-password:
+    file: "${BOOKSTACK_SECRET_RESTIC_PASSWORD}"
 
   saml-cert:
     file: "${BOOKSTACK_SECRET_SAML_CERT}"
@@ -169,3 +191,36 @@ services:
 
     volumes:
       - db-data:/var/lib/mysql
+
+
+  restic:
+    container_name: bookstack-restic
+    image: ghcr.io/stanford-rc/bookstack-restic:main
+    command: cron
+    depends_on:
+      - db
+    restart: unless-stopped
+
+    environment:
+      MYSQL_HOST: "bookstack-db"
+      MYSQL_TCP_PORT: "3306"
+      TZ: "${BOOKSTACK_TZ}"
+
+      RESTIC_REPOSITORY: "gs:${GOOGLE_RESTIC_BUCKET}:/"
+      RESTIC_PASSWORD_FILE: "/run/secrets/restic-password"
+      GOOGLE_PROJECT_ID: "${GOOGLE_PROJECT_ID}"
+      GOOGLE_APPLICATION_CREDENTIALS: "/run/secrets/restic-gcp"
+
+      DB_DATABASE: "bookstack"
+      DB_PASS_FILE: "/run/secrets/db-root-password"
+
+    secrets:
+      - db-root-password
+      - restic-gcp
+      - restic-password
+
+    networks:
+      - back
+
+    volumes:
+      - bookstack-data:/bookstack

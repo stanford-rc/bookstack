@@ -124,6 +124,12 @@ The following variables are needed to create the Bookstack VM:
 
 * `VAULT_BASE`: The base path for our secrets.
 
+* `GOOGLE_PROJECT_ID`: The ID of the Google Cloud project which stores Restic
+  backups.
+
+* `GOOGLE_RESTIC_BUCKET`: The name of the Google Cloud Storage bucket which
+  stores Restic backups.
+
 The following environment variables are used by the Bookstack containers:
 
 * `BOOKSTACK_URL`: The URL to the Bookstack site.  It's formed by taking
@@ -174,6 +180,20 @@ The following environment variables are used by the Bookstack containers:
 * `BOOKSTACK_SECRET_DB_ROOT_PASSWORD`: This is the path to the file containing
   the MariaDB root password.
 
+* `BOOKSTACK_SECRET_RESTIC_PASSWORD`: This is the path to the file containing
+  the password of the Restic repository.  The Restic repository contains all of
+  the backup data, and is encrypted using this password.  If you lose or change
+  this password, all backups will be lost!
+
+* `BOOKSTACK_SECRET_RESTIC_GOOGLE_CREDENTIALS`: This is the path to the JSON
+  file containing credentials for a Google Cloud service account.  This,
+  combined with the Project ID and bucket name, will be used to store backups
+  via Restic.
+
+* `GOOGLE_PROJECT_ID`: As above, from `GOOGLE_PROJECT_ID`.
+
+* `GOOGLE_RESTIC_BUCKET`: As above, from `GOOGLE_RESTIC_BUCKET`.
+
 * `MAIL_HOST`: The SMTP server that receives email.  It must support TLS.
 
 * `MAIL_PORT`: The port to use for SMTP.
@@ -199,6 +219,13 @@ here as `BASE`:
 
   * `root` contains the MariaDB root password
 
+* `BASE/restic` has a password and a key, used by Restic:
+
+  * `password` contains the password used to encrypt Restic data in the cloud.
+
+  * `gcp` contains the JSON Google Cloud Service Account credential that Restic
+    will use.
+
 # Building container images
 
 See the [docker-bookstack-certbot
@@ -210,6 +237,42 @@ containers provided by [MariaDB in Docker
 Hub](https://hub.docker.com/_/mariadb/).
 
 # First-Time Installation
+
+## Creating a Google Cloud Storage bucket
+
+Backups will be stored in a Google Cloud Storage bucket
+
+* **Create a Project**: If you don't have one already, create a Google Cloud
+  Storage project.  Make a note of the Project ID (not the number, or
+  description, the ID).
+
+* **Create a Bucket**: Create a Google Cloud Storage bucket.  This can be a
+  single-region bucket.  Use Autoclass, and allow storage in Coldline and
+  Archive classes.  Ensure public access is disabled.  Make note of the bucket
+  name.
+
+* **Create a Service Account**: Create a Service Account.  The Service Account
+  will need "Storage Object Admin" access, with the following condition
+  (written in Condition Editor's 'CEL' format):
+
+  ```
+(
+  resource.service == "storage.googleapis.com" &&
+  resource.type == "storage.googleapis.com/Bucket" &&
+  resource.name == "projects/_/buckets/BUCKET_NAME"
+) || (
+  resource.service == "storage.googleapis.com" &&
+  resource.type == "storage.googleapis.com/Object" &&
+  resource.name.startsWith("projects/_/buckets/BUCKET_NAME/objects/")
+)
+```
+
+  Replace `BUCKET_NAME` with your bucket's name (you'll have to replace it in
+  two loations).  This will give the Service Account permissions to list
+  objects in the bucket, and permission to add/get/change/delete inidividual
+  objects.
+
+  Download the JSON credentials for the Service Account.
 
 ## Creating the VM on containerhost
 
@@ -319,6 +382,21 @@ from Let's Encrypt.
 
 On the first run, with standard login, the default account has email address
 `admin@admin.com` and password password`.
+
+## Configure Backups
+
+Once the Bookstack site is up, even though it has not been configured, you can
+proceed to set up backups.
+
+Enter the Restic container with `docker exec -it bookstack-restic`.  Inside the
+container, run `restic init`.  All the configuration and credentials are passed
+via environment variables, so Restic will use those to create the repository.
+
+At the end, you should have a message saying that the repository has been
+created.  If you check the Google Cloud Storage bucket, you should see at least
+a `config` file and a `keys` directory.
+
+Every 15 minutes, Restic will take a backup.  So backups are now complete!
 
 ## Configuring SAML
 
@@ -491,3 +569,24 @@ three commands:
 Finally, depending on the upgrade, you might also need to run additional steps
 in the [upstream Bookstack upgrade
 guide](https://www.bookstackapp.com/docs/admin/updates/)).
+
+## Restic
+
+Upgrading the Restic container involves upgrading the Dockerfile of
+[bookstack-restic](https://github.com/stanford-rc/bookstack-restic), waiting
+for it to rebuild, restarting the stack, and running post-upgrade commands.
+
+First, update the `Dockerfile` in the
+[bookstack-restic](https://github.com/stanford-rc/bookstack-restic)
+repository, and wait for the container image to build.
+
+Next, run `docker-compose pull restic` to have Docker pull down the updated
+container image.  If no new image is found, wait a while and try again.  At
+this point, the stack is still running on the older image.
+
+Run `docker-compose up -d`, which should trigger a recreation and restart of the
+Restic container.  There is no specific command needed to run an upgrade.
+
+The last part of the upgrade is to confirm connectivity is still good, and that
+the repository is good.  Run `docker-compose exec restic snapshots --latest 1`:
+That will connect to the repository and return the latest snapshot.
