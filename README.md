@@ -255,7 +255,7 @@ Backups will be stored in a Google Cloud Storage bucket
   will need "Storage Object Admin" access, with the following condition
   (written in Condition Editor's 'CEL' format):
 
-  ```
+```
 (
   resource.service == "storage.googleapis.com" &&
   resource.type == "storage.googleapis.com/Bucket" &&
