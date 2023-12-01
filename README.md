@@ -316,7 +316,9 @@ which does the following:
 7. Populate `/etc/environment` with all of the environment variables defined
  above.
 
-8. Create file `/cloud_init_complete`, as a marker file.
+To check if cloud-init has finished, run `journalctl -f` and look for the
+message "Reached target Cloud-init target.".  Of, run `systemctl status
+cloud-init.target` and check if the unit is "active" or still "activating".
 
 The VM creation script does not currently download or deploy anything with
 Docker Compose.  That's up to you!
