@@ -443,12 +443,13 @@ Next, run `docker-compose up --no-start`.  That creates everything, but does
 not start any services.  This will download the new MariaDB container image,
 but not start anything.
 
-Next, run `docker-compose start db`.  That will start just the MariaDB server.
-Run `docker logs -f bookstack-db` to see logs from DB server start.  Once you
-see the message "mariadbd: ready for connection.", it is safe to continue.
+Next, run `docker-compose start -d db`.  That will start just the MariaDB
+server.  Run `docker logs -f bookstack-db` to see logs from DB server start.
+Once you see the message "mariadbd: ready for connection.", it is safe to
+continue.
 
 The last part of the upgrade is to run `mariadb-upgrade` within the container.
-To do so, run `docker exec bookstack-db mariadb-upgrade --password=$(cat
+To do so, run `docker-compose exec db mariadb-upgrade --password=$(cat
 /run/bookstack/db-root)`.  The tool will either finish the upgrade, or will
 report no upgrade is needed.  In particular, minor upgrades might not need any
 table upgrades.
@@ -471,7 +472,7 @@ Next, run `docker-compose pull app` to have Docker pull down the updated
 container image.  If no new image is found, wait a while and try again.  At
 this point, the stack is still running on the older image.
 
-Run `docker-compose up`, which should trigger a recreation and restart of the
+Run `docker-compose up -d`, which should trigger a recreation and restart of the
 Bookstack container.  Run `docker logs -f bookstack-app` to see logs from DB
 server start.  The updated Bookstack service should see that this is an
 upgrade, and run a schema migration (that covers the `php artisan migrate`
@@ -481,11 +482,11 @@ guide](https://www.bookstackapp.com/docs/admin/updates/)).
 The last part of the upgrade is to clear system caches, which can be done with
 three commands:
 
-* `docker exec bookstack-app php /app/www/artisan cache:clear`
+* `docker-compose exec app php /app/www/artisan cache:clear`
 
-* `docker exec bookstack-app php /app/www/artisan config:clear`
+* `docker-compose exec app php /app/www/artisan config:clear`
 
-* `docker exec bookstack-app php /app/www/artisan view:clear`
+* `docker-compose exec app php /app/www/artisan view:clear`
 
 Finally, depending on the upgrade, you might also need to run additional steps
 in the [upstream Bookstack upgrade
