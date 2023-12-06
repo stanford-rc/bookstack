@@ -137,6 +137,7 @@ services:
       SAML2_NAME: "${BOOKSTACK_SAML_IDP_NAME}"
       SAML2_IDP_ENTITYID: "${BOOKSTACK_SAML_IDP_ENTITYID}"
       SAML2_USER_TO_GROUPS: "true"
+      SAML2_REMOVE_FROM_GROUPS: "true"
       FILE__SAML2_SP_x509: "/run/secrets/saml-cert" 
       FILE__SAML2_SP_x509_KEY: "/run/secrets/saml-key"
       SAML2_ONELOGIN_OVERRIDES: "{\"sp\":{\"entityId\":\"${BOOKSTACK_URL}\"},\"security\":{\"authnRequestsSigned\":true,\"logoutRequestSigned\":true,\"wantMessagesSigned\":true,\"wantAssertionsSigned\":true,\"wantAssertionsEncrypted\":true}}"
