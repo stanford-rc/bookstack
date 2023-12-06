@@ -332,10 +332,6 @@ config:
         MAIL_PORT=25
         MAIL_FROM=nobody@stanford.edu
         MAIL_FROM_NAME=Bookstack
-    - path: /cloud_init_complete
-      owner: root:root
-      permissions: '0644'
-      content: Hello
 EOF
 
 
