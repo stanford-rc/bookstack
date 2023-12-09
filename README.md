@@ -44,7 +44,8 @@ portability, we use those!
 * **The Bookstack-with-Let'sEncrypt container**: This image starts with the
   [LinuxServer.io](https://linuxserver.io) [Bookstack
   container](https://docs.linuxserver.io/images/docker-bookstack), and adds
-  support for Let's Encrypt.
+  support for Let's Encrypt.  [It has its own
+  repository](https://github.com/stanford-rc/docker-bookstack-certbot).
 
 * **The MariaDB container**: This runs our database!  This is the
   `mariadb:10.11.2` image, pulled from Docker Hub.
