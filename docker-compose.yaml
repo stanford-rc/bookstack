@@ -216,6 +216,13 @@ services:
       DB_DATABASE: "bookstack"
       DB_PASS_FILE: "/run/secrets/db-root-password"
 
+      RETAIN_HOURLY: 48
+      RETAIN_DAILY: 7
+      RETAIN_WEEKLY: 4
+      RETAIN_MONTHLY: 18
+      RETAIN_YEARLY: 0
+      REPACK_MAX_UNUSED: "80%"
+
     secrets:
       - db-root-password
       - restic-gcp
