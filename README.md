@@ -263,6 +263,10 @@ The command `docker volume inspect VOLUME_NAME` command gives you, among other
 things, the path to volume files.  *Don't mess with these files while its
 container is running!*
 
+# Backup & Restore
+
+This content [has its own page](docs/backups.md).
+
 # Upgrading the containers
 
 Remember, before upgrading anything, be sure to have a backup of everything!
