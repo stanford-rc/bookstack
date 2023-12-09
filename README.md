@@ -50,6 +50,12 @@ portability, we use those!
 * **The MariaDB container**: This runs our database!  This is the
   `mariadb:10.11.2` image, pulled from Docker Hub.
 
+* **The Restic container**: This handles our backups.  This image starts with
+  the [Restic
+  container](https://github.com/restic/restic/pkgs/container/restic), and adds
+  some packages & scripts to handle backups of the database.  [It has its own
+  repository](https://github.com/stanford-rc/bookstack-restic).
+
 * **Docker Compose**: Docker Compose is used to bring up the Bookstack
   environment, and to connect containers to their ports and filesystems.
 
@@ -77,6 +83,9 @@ portability, we use those!
   of the secrets needed by the container.  That being said, most secrets are
   only pulled from Vault at install-time.  A Vault AppRole is used to provide
   access to the secrets.
+
+* **A Google Cloud project and bucket**: This stores the backups created by
+  Restic.
 
 ## Data Volume Paths
 
@@ -237,17 +246,23 @@ For MariaDB, we don't modify the container, we just rely on the MariaDB
 containers provided by [MariaDB in Docker
 Hub](https://hub.docker.com/_/mariadb/).
 
+See the [booksack-restic repo](https://github.com/stanford-rc/bookstack-restic)
+for information on how the Restic container image is built.
+
 # First-Time Installation
 
 This content [has its own page](docs/first-time.md)!
 
 # Accessing the containers
 
-There are two containers:
+There are three containers:
 
 * The `bookstack-db` container, providing the `db` service, runs MariaDB.
 
 * The `bookstack-app` container, providing the `app` service, runs Bookstack.
+
+* The `bookstack-restic` container, providing the `restic` service, runs
+  Restic.
 
 When they're running, you can access the container environments with `docker
 exec -it CONTAINER_NAME bash`.  You can also read logs from the container using
