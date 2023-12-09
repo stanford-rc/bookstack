@@ -372,5 +372,10 @@ Run `docker-compose up -d`, which should trigger a recreation and restart of the
 Restic container.  There is no specific command needed to run an upgrade.
 
 The last part of the upgrade is to confirm connectivity is still good, and that
-the repository is good.  Run `docker-compose exec restic snapshots --latest 1`:
-That will connect to the repository and return the latest snapshot.
+the repository is good.  This can be done with two commands:
+
+* `docker-compose exec restic restic snapshots --latest 1` will connect to the
+  repository and return the information from the latest snapshot.
+
+* `docker-compose exec restic restic check` does a consistency check of
+  Restic's data, without going as far as downloading all of the pack files.
