@@ -171,7 +171,7 @@ services:
 
   db:
     container_name: bookstack-db
-    image: mariadb:10.11.6
+    image: mariadb:11.4
     restart: unless-stopped
 
     secrets:
