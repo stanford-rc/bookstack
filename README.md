@@ -305,18 +305,16 @@ Next, run `docker-compose up --no-start`.  That creates everything, but does
 not start any services.  This will download the new MariaDB container image,
 but not start anything.
 
-Next, run `docker-compose start -d db`.  That will start just the MariaDB
+Next, run `docker-compose start db`.  That will start just the MariaDB
 server.  Run `docker logs -f bookstack-db` to see logs from DB server start.
-Once you see the message "mariadbd: ready for connection.", it is safe to
-continue.
 
-The last part of the upgrade is to run `mariadb-upgrade` within the container.
-To do so, run `docker-compose exec db mariadb-upgrade --password=$(cat
-/run/bookstack/db-root)`.  The tool will either finish the upgrade, or will
-report no upgrade is needed.  In particular, minor upgrades might not need any
-table upgrades.
+The MariaDB container will automatically detect that you are using a newer
+version with an older databasae.  As soon as the server starts, the container's
+entrypoint script will run `mariadb-upgrade` for you, restarting the MariaDB
+server at the end.  Look for the messages "Finished mariadb-upgrade",
+"Temporary server stopped", and finally "mariadbd: ready for connections.".
 
-Finally, run `docker-compose up -d` to bring up the rest of the stack (the
+Now you can run `docker-compose up -d` to bring up the rest of the stack (the
 Bookstack server)!
 
 ## Bookstack
