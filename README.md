@@ -290,16 +290,22 @@ Remember, before upgrading anything, be sure to have a backup of everything!
 ## MariaDB
 
 Upgrading the MariaDB container involves shutting down the entire Docker
-Compose stack, updating the `docker-compose.yaml` file, and bringing up _just_
-the database.  You then run the upgrade command, and bring up the Bookstack
-application.
+Compose stack, sometimes updating the `docker-compose.yaml` file, and bringing
+up _just_ the database.  You then run the upgrade command, and bring up the
+Bookstack application.
 
 The entire stack must be shut down, because everything in the stack relies on
 the database.
 
 To stop the stack, run `docker-compose down`, which will shut down everything,
-but leave the volumes intact.  It's then safe to update to the newer
-`docker-compose.yaml` file.
+but leave the volumes intact.
+
+If you plan on doing a major upgrade (such as from 11.4 to 11.7), it's now safe
+to update to the newer `docker-compose.yaml` file, and then run `docker-compose
+pull db` to download the MariaDB image under the new tag.  If you just want to
+upgrade to the latest minor version, skip changing the `docker-compose.yaml`
+file, and just run the `docker-compose pull db` command.  This will trigger
+Docker Compose to check for a newer container image, under the existing tag.
 
 Next, run `docker-compose up --no-start`.  That creates everything, but does
 not start any services.  This will download the new MariaDB container image,
