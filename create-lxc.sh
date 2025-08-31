@@ -315,6 +315,7 @@ config:
         BOOKSTACK_SECRET_SAML_CERT=/run/bookstack/sp_cert.pem
         BOOKSTACK_SECRET_SAML_KEY=/run/bookstack/sp_key.pem
         BOOKSTACK_URL=https://${BOOKSTACK_NAME}.stanford.edu
+		#BOOKSTACK_IFRAME_SOURCES=
         #BOOKSTACK_DEBUG=
         #SAML2_DUMP_USER_DETAILS=
         GOOGLE_PROJECT_ID=${GOOGLE_PROJECT_ID}

@@ -44,6 +44,9 @@
 #   This will contain the PEM-encoded RSA key for the SAML SP.
 #   Do not encrypt the key file.
 #
+# BOOKSTACK_IFRAME_SOURCES: If you include any iframes as embeds, add their
+#   site URLs to this list (space-separated).
+#
 # GOOGLE_PROJECT_ID: Set this to a Google Cloud project ID.
 #   This Google Cloud project will be used to store backups.
 #
@@ -120,6 +123,7 @@ services:
       APP_DEBUG: "${BOOKSTACK_DEBUG-}"
       TZ: "${BOOKSTACK_TZ}"
       STORAGE_TYPE: "local_secure"
+      ALLOWED_IFRAME_SOURCES: "https://*.draw.io https://*.youtube.com https://*.youtube-nocookie.com https://*.vimeo.com ${BOOKSTACK_IFRAME_SOURCES-}"
       LETS_ENCRYPT_TOS_AGREE: "${LETS_ENCRYPT_TOS_AGREE}"
       LETS_ENCRYPT_CONTACT: "${LETS_ENCRYPT_CONTACT}"
       LETS_ENCRYPT_STAGING: "${LETS_ENCRYPT_STAGING-}"
