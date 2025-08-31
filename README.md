@@ -284,6 +284,23 @@ container is running!*
 
 This content [has its own page](docs/backups.md).
 
+# Upgrading the repo
+
+From time to time, this repository changes.  When that happens, you should take
+down the stack before upgrading.
+
+First, stop the stack by running `docker-compose down`, which will shut down
+everything.
+
+Next, you can `git pull --rebase` to update the Docker Compose files.
+
+After updating, run `git log --patch create-lxc.sh` to see if any changes need
+to be made to the environment variables.  Make changes (for example, in
+`/etc/environment`) as appropriate.
+
+Run `docker-compose up -d` to bring up the stack.  Test that Bookstack works as
+expected!
+
 # Upgrading the containers
 
 Remember, before upgrading anything, be sure to have a backup of everything!
