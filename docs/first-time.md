@@ -131,8 +131,6 @@ you may put it into the `VAULT_SECRET` environment variable.
 With the VM up and the secrets retrieved, you should now set the final
 environment variables:
 
-* Set `BOOKSTACK_AUTH_METHOD` to `standard`.
-
 * Set `LETS_ENCRYPT_STAGING` if you are using the Let's Encrypt Staging
   environment.
 
@@ -144,8 +142,11 @@ up the database (including creating a new DB, if needed), and then start up
 Bookstack.  The first run of Bookstack will include requesting a certificate
 from Let's Encrypt.
 
-On the first run, with standard login, the default account has email address
-`admin@admin.com` and password password`.
+Bookstack is now up, but without an administrator.  The default account has
+email address `admin@admin.com` and password `password`, but does not work when
+SAML authentication is enabled.  That's a good thing, because the creation of
+the Let's Encrypt certificate has told the world that the site exists, so we
+don't want the default credentials to be accessible.
 
 ## Configure Backups
 
@@ -164,36 +165,21 @@ Every 15 minutes, Restic will take a backup.  So backups are now complete!
 
 ## Configuring SAML
 
-On a first run of Bookstack, SAML is not configured.  The process of
-configuring SAML has three steps:
+On a first run of Bookstack, the SAML SP is configured, but the IdP is not, and
+there is no administrator.  The process of configuring SAML has three steps:
 
-1. Start Bookstack with standard (email & password) authentication, log in, and
-   change your admin password.
+1. Update the IdP with the SP's metadata.
 
-2. Switch to SAML, log in, and then switch back to standard auth.
+2. Create an administrator.
 
-3. Log in as the local admin, give your SAML account admin rights, and switch
-   back to SAML.
+3. Log in.
 
 Each step is covered below.
 
-### First Login
+### Update the IdP
 
-On your first login, make sure you can log in, and that the (empty) site is
-there.  Logins trigger an audit log entry, so just logging in is enough to test
-that the database is up, with writes enabled.
-
-Go to the *Edit Profile* menu, and change your password.
-
-### First SAML Switch & Metadata load
-
-Log out of Bookstack, then shut down the stack (with `docker-compose down`.
-Change the `BOOKSTACK_AUTH_METHOD` environment variable to `saml2`, and bring
-the stack back up (`docker-compose up`).
-
-Once the application is running, navigate to
-`https://YOUR_BOOKSTACK_SITE/saml2/metadata`.  This will give you the SAML 2
-metadata XML.
+Navigate to `https://YOUR_BOOKSTACK_SITE/saml2/metadata`.  This will give you
+the SAML2 metadata XML.
 
 Go to the [SPDB](https://spdb.stanford.edu/), and paste in your SP metadata XML.
 You will need to set several parameters:
@@ -206,35 +192,38 @@ You will need to set several parameters:
   `validUntil` to match the end date of your SAML SP certificate.  When you
   created your SAML certificate, you were given the exact string to enter.
 
-Once your SPDB record is accepted, wait for Stanford Login to pick up the new
-SP metadata (it takes about 15 minutes).  Then, try to log in!
+Once your SPDB record is accepted, continue setup while waiting for Stanford
+Login to pick up the new SP metadata (it takes about 15 minutes).
+
+### Create a local account
+
+Bookstack provides a command-line way to create an administrator account, for
+times like this when there is no administrator account.  The command to run is:
+
+```
+docker-compose exec app php /app/www/artisan bookstack:create-admin --email="sunetid@stanford.edu" --name="Somebody" --external-auth-id="sunetid"
+```
+
+(Replace the two instances of `sunetid` with your SUNetID.)
+
+This command runs the manual account-creation process, using your email
+address, name, and SUNetID.  The `external-auth-id` in particular is important:
+That must match your SUNetID, even if you have a different email address.
+
+### Log in
+
+Before you can log in, you need to wait for the IdP to update with the metadata
+you uploaded to the SPDB.  The way you can be certain the change has taken
+effect is to download the IdP's [list of all SP metadata](https://samlmetadata.stanford.edu/sp-metadata.xml), and search for your SP's `entityId`.
+
+Once you see your SP in the list, try to log in!
 
 If everything works, you should be sent through Stanford Login, and then back
 to Bookstack.  You will be logged in, and if you have a
 [Gravatar](https://gravatar.com/) attached to your email address, it will be
 showing.
 
-### Switch back to Standard, grant admin-ship, and switch back to SAML
-
-Log out of Bookstack, then shut down the stack agian (`docker-compose down`).
-Change the `BOOKSTACK_AUTH_METHOD` to `standard`, and bring up the stack
-(`docker-compose up`).
-
-Log in to Bookstack using the static credentials (`admin@admin.com`, and the
-password you set).  Go to *Settings*, then *Users*, and locate the user entry
-for your SAML account.  Click on that, and add them to the "Admin" role.  Save
-changed!
-
-Log out of Bookstack, and once again do the dance of shutting down the stack
-(`docker-compose down`), updating `BOOKSTACK_AUTH_METHOD` to `saml2`, and
-bringing the stack back up (`docker-compose up`).
-
-You should now edit `/etc/environment`, ensuring `BOOKSTACK_AUTH_METHOD` is
-defined and set to `saml2`.
-
-Log back in to Bookstack.  You should go through Stanford Login once again, but
-this time you should have Bookstack admin access.  You can now proceed to set
-up Bookstack!
+You can now proceed to set up Bookstack!
 
 ## Finishing Bookstack configuration
 

@@ -132,7 +132,7 @@ services:
       DB_DATABASE: "bookstack"
 
       # SAML general configuration
-      AUTH_METHOD: "${BOOKSTACK_AUTH_METHOD}"
+      AUTH_METHOD: "saml2"
       SAML2_AUTOLOAD_METADATA: "true"
       SAML2_NAME: "${BOOKSTACK_SAML_IDP_NAME}"
       SAML2_IDP_ENTITYID: "${BOOKSTACK_SAML_IDP_ENTITYID}"
