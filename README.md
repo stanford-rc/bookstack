@@ -114,8 +114,6 @@ The following paths exist in the VM's data volume:
 
 * `www`: TODO
 
-
-
 ## Variables
 
 The following variables are needed to create the Bookstack VM:
@@ -158,9 +156,6 @@ The following environment variables are used by the Bookstack containers:
 
 * `BOOKSTACK_TZ`: The Olsen time zone ID for the Bookstack application.  It
   influences how times are displayed.  Hard-coded to `US/Pacific`.
-
-* `BOOKSTACK_AUTH_METHOD`: The authentication method to use.  This is either
-  `standard` (username/password) or `saml2`.
 
 * `BOOKSTACK_SAML_IDP_NAME`: The name of the SAML-based login method that
   Bookstack will present to users.  Hard-coded to "Stanford Login".
