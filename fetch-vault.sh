@@ -49,6 +49,10 @@ fi
 VAULT_CRED=$(vault write -force -field=token auth/approle/login role_id=${VAULT_APPID} secret_id=${VAULT_SECRET})
 vault login -no-print -method=token ${VAULT_CRED}
 
+# Make /run/bookstack, if not yet created.
+if [ ! -d /run/bookstack ]; then
+	mkdir /run/bookstack
+fi
 
 # Get our Vault data.
 echo "Will write SAML cert to ${BOOKSTACK_SECRET_SAML_CERT}" >&2
