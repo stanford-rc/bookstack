@@ -47,8 +47,9 @@ portability, we use those!
   support for Let's Encrypt.  [It has its own
   repository](https://github.com/stanford-rc/docker-bookstack-certbot).
 
-* **The MariaDB container**: This runs our database!  This is the
-  `mariadb:10.11.2` image, pulled from Docker Hub.
+* **The MariaDB container**: This runs our database!  This is a `mariadb`
+  image, pulled from Docker Hub.  See the `docker-compose.yaml` file for the
+  specific major & minor version.
 
 * **The Restic container**: This handles our backups.  This image starts with
   the [Restic
