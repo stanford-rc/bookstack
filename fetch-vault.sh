@@ -60,7 +60,7 @@ if [ -f ~/.vault-token ]; then
 fi
 
 # Get a Vault token
-VAULT_CRED=$(vault write -force -field=token auth/approle/login role_id=${VAULT_APPID} secret_id=${VAULT_SECRET})
+VAULT_CRED=$(vault write -field=token auth/approle/login role_id=${VAULT_APPID} secret_id=${VAULT_SECRET})
 vault login -no-print -method=token ${VAULT_CRED}
 
 # Make /run/bookstack, if not yet created.
