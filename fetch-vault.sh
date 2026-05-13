@@ -30,6 +30,20 @@ if [ ! "${VAULT_SECRET:-x}" = "x" ]; then
 	echo "Using Vault secret passed via the environment" >&2
 else
 	echo
+	echo "We need an AppRole Secret ID, in order to read from Vault."
+	echo "To get a Secret ID, you need the AppRole Role name."
+	echo
+	echo "If you don't know the AppRole Role name, here's a way to find it, by checking all available roles.  Log in to Vault CLI, then try this shell one-liner:"
+	echo
+	echo 'for role in $(vault list --format json auth/approle/role | jq -r .[]); \'
+	echo 'do id=$(vault read --field role_id auth/approle/role/${role}/role-id 2>/dev/null); \'
+	echo "if [ \"\${id}\" = \"${VAULT_APPID}\" ]; then echo \"AppRole role name is \${role}\"; "
+	echo "break; fi; done"
+	echo
+	echo "Once you know the AppRole Role name, use this command to get a one-time-use Secret ID:"
+	echo
+	echo 'vault write --field secret_id auth/approle/role/${role_name}/secret-id num_uses=1 ttl=5m'
+	echo
 	echo -n "Please enter the Vault AppRole's Secret ID: "
 	read VAULT_SECRET
 	echo -n "Use Secret ID ${VAULT_SECRET} [y/n]? "
